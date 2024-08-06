@@ -1,4 +1,4 @@
-CFLAGS := -O3 -pg
+CFLAGS := -O2 -Wall -Wextra
 
 OBJ := main.o
 

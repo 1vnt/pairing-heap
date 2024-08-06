@@ -22,8 +22,7 @@ HEAP_HEAD(heap, timer) head;
 
 void printPairingHeap(struct type *root);
 
-static struct type *heap_HEAP_MELD(struct name *head, struct type *a,
-                                   struct type *b) {
+static struct type *heap_HEAP_MELD(struct type *a, struct type *b) {
   assert(HEAP_NEXT(a, field) == NULL);
 
   if ((cmp)(a, b)) {
@@ -56,8 +55,7 @@ static struct type *heap_HEAP_MELD(struct name *head, struct type *a,
   return b;
 }
 
-static struct type *heap_HEAP_COMBINE_SIBLINGS(struct name *head,
-                                               struct type *left) {
+static struct type *heap_HEAP_COMBINE_SIBLINGS(struct type *left) {
   HEAP_PREV(left, field) = NULL;
 
   struct type *root = NULL;
@@ -69,7 +67,7 @@ static struct type *heap_HEAP_COMBINE_SIBLINGS(struct name *head,
     }
     struct type *b = HEAP_NEXT(a, field);
     HEAP_NEXT(a, field) = NULL;
-    b = heap_HEAP_MELD(head, a, b);
+    b = heap_HEAP_MELD(a, b);
     if (HEAP_NEXT(b, field) == NULL) {
       root = b;
       break;
@@ -83,7 +81,7 @@ static struct type *heap_HEAP_COMBINE_SIBLINGS(struct name *head,
     }
     struct type *b = HEAP_PREV(root, field);
     HEAP_NEXT(b, field) = NULL;
-    root = heap_HEAP_MELD(head, b, root);
+    root = heap_HEAP_MELD(b, root);
   }
 }
 
@@ -95,7 +93,7 @@ struct type *heap_HEAP_DELETE_MIN(struct name *head) {
 
   if (HEAP_CHILD(root, field) != NULL) {
     struct type *root_child = HEAP_CHILD(root, field);
-    HEAP_ROOT(head) = heap_HEAP_COMBINE_SIBLINGS(head, root_child);
+    HEAP_ROOT(head) = heap_HEAP_COMBINE_SIBLINGS(root_child);
   } else {
     HEAP_ROOT(head) = NULL;
   }
@@ -137,8 +135,8 @@ void heap_HEAP_REMOVE(struct name *head, struct type *elm) {
 
   // if children, merge back in
   struct type *elm_child = HEAP_CHILD(elm, field);
-  struct type *x = heap_HEAP_COMBINE_SIBLINGS(head, elm_child);
-  HEAP_ROOT(head) = heap_HEAP_MELD(head, x, HEAP_ROOT(head));
+  struct type *x = heap_HEAP_COMBINE_SIBLINGS(elm_child);
+  HEAP_ROOT(head) = heap_HEAP_MELD(x, HEAP_ROOT(head));
 }
 
 void heap_HEAP_INSERT(struct name *head, struct type *elm) {
@@ -146,7 +144,7 @@ void heap_HEAP_INSERT(struct name *head, struct type *elm) {
          HEAP_NEXT(elm, field) == NULL);
 
   if (HEAP_ROOT(head) != NULL) {
-    HEAP_ROOT(head) = heap_HEAP_MELD(head, elm, HEAP_ROOT(head));
+    HEAP_ROOT(head) = heap_HEAP_MELD(elm, HEAP_ROOT(head));
   } else {
     HEAP_ROOT(head) = elm;
   }
